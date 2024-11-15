@@ -1,0 +1,41 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+from scipy.stats import linregress
+
+def sea_level_predictor():
+    # Load the dataset
+    df = pd.read_csv('epa-sea-level.csv')
+
+    # Scatter plot of the data
+    plt.scatter(df['Year'], df['CSIRO Adjusted Sea Level'])
+
+    # Create a line of best fit for the entire dataset (1880 to present)
+    slope, intercept, r_value, p_value, std_err = linregress(df['Year'], df['CSIRO Adjusted Sea Level'])
+
+    # Plot the line of best fit
+    years_extended = range(1880, 2051)  # Extend the years to 2050
+    plt.plot(years_extended, [slope * year + intercept for year in years_extended], label='Best fit line (1880-2018)', color='red')
+
+    # Create a line of best fit for the data from 2000 to present
+    df_recent = df[df['Year'] >= 2000]
+    slope_recent, intercept_recent, _, _, _ = linregress(df_recent['Year'], df_recent['CSIRO Adjusted Sea Level'])
+
+    # Plot the second line of best fit
+    plt.plot(years_extended, [slope_recent * year + intercept_recent for year in years_extended], label='Best fit line (2000-2018)', color='green')
+
+    # Add labels and title
+    plt.title('Rise in Sea Level')
+    plt.xlabel('Year')
+    plt.ylabel('Sea Level (inches)')
+
+    # Add a legend
+    plt.legend()
+
+    # Save the plot
+    plt.savefig('sea_level_plot.png')
+
+    # Display the plot
+    plt.show()
+
+# Run the function to generate the plot
+sea_level_predictor()
